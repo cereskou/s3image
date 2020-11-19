@@ -42,9 +42,9 @@ named **TransferS3**
 ```
 
 ### 4. Register ALB rule
-path: /storage/* 
-Target group: s3images
-Target type: lambda -> **TransferS3**
+path: /storage/* <br>
+Target group: s3images<br>
+Target type: lambda -> **TransferS3**<br>
 
 ### 5. Test
 https://www.dummydomain.co.jp/storage/Pic/20200610/20200610104537/0/020200610105526775.jpg
