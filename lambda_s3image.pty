@@ -1,0 +1,62 @@
+import json
+import boto3
+import base64
+import io
+
+ssm = boto3.client('ssm')
+s3 = boto3.client('s3')
+
+# SSM Parameter Store
+# TransferS3_Bucket
+# {
+# 	"bucket":"dittosdev",
+# 	"key":"shared",
+# 	"path":"/storage/"
+# }
+
+def get_param(key: str) -> str:
+    global ssm
+    try:
+        return ssm.get_parameter(Name=key)['Parameter']['Value']
+    except ssm.exceptions.ParameterNotFound:
+        return None
+
+def lambda_handler(event, context):
+    # bucket = 'dittosdev'
+    # key = 'Pic/20200610/20200610104537/0/020200610105526775.jpg'
+    d = json.loads(get_param('TransferS3_Bucket'))
+    bucket = d['bucket']
+    key = d['key']
+    
+    # query string
+    path = event['path']
+    path = path.replace(d['path'], '')
+
+    if not key.endswith('/'):
+        key = key + '/' + path
+    else:
+        key = key + path
+        
+    # debug output
+    print('bucket: ' + bucket)
+    print('key   : ' + key)
+
+    # get s3 object
+    response = s3.get_object(Bucket=bucket, Key=key)
+    
+    content = response['Body']
+    
+    # base
+    data = base64.b64encode(content.read())
+
+    
+    # return
+    return {
+        'statusCode': 200,
+        'body': data,
+        'isBase64Encoded': True,
+        'headers': {
+            'Content-Type': 'image/jpeg'
+            # 'Content-Disposition': 'attachment; filename=020200610105526775.jpg'
+        }
+    }
