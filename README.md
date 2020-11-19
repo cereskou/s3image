@@ -1,7 +1,8 @@
 # s3image
 AWS Lambda function to view image file on S3 bucket
 
-## SSM Parameter Store
+## Flow
+### 1. SSM Parameter Store
 **TransferS3_Bucket**
 ```
 {
@@ -11,7 +12,7 @@ AWS Lambda function to view image file on S3 bucket
 }
 ```
 
-## Upload image to s3://dittosdev/shared
+### 2. Upload image to s3://dittosdev/shared
 ```
 aws s3 cp c:\tmp\image s3://dittosdev/shared --recursive
 ```
@@ -20,7 +21,7 @@ aws s3 cp c:\tmp\image s3://dittosdev/shared --recursive
 - Pic/20200610/20200610104537/0/020200610105530723.jpg
 
 
-## Create a Lambda Function in Python
+### 3. Create a Lambda Function in Python
 named **TransferS3**
 1. get setup json data from SSM parameter store. key=TransferS3_Bucket
 1. decode json. 
@@ -40,10 +41,10 @@ named **TransferS3**
     }
 ```
 
-## Register ALB rule
+### 4. Register ALB rule
 path: /storage/* 
 Target group: s3images
 Target type: lambda -> **TransferS3**
 
-## Test
+### 5. Test
 https://www.dummydomain.co.jp/storage/Pic/20200610/20200610104537/0/020200610105526775.jpg
